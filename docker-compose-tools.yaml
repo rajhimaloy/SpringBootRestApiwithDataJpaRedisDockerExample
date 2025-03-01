@@ -1,0 +1,109 @@
+version: '3.8'
+
+networks:
+  web-app-net:
+    name: my-web-app-net
+    #driver: overlay
+    driver: bridge
+
+volumes:
+  pg-studentDB-storage:
+  pgadmin-studentDB-data:
+  #pg-notifyDB-storage:
+  redis-inmemory-storage:
+
+services:
+  pg-studentDB:
+    image: postgres:latest
+    container_name: pg-studentDB-container
+    restart: always
+    environment:
+      POSTGRES_DB: studentDB
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root@123
+    ports:
+      - 5432:5432
+    networks:
+      - web-app-net
+    volumes:
+      - pg-studentDB-storage:/var/lib/postgresql/data
+
+  pgadmin-studentDB:
+    image: dpage/pgadmin4
+    container_name: pgadmin-studentDB-container
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: root@mypage.com
+      PGADMIN_DEFAULT_PASSWORD: root@123
+    volumes:
+      - pgadmin-studentDB-data:/var/lib/pgadmin
+    restart: on-failure
+    networks:
+      - web-app-net
+    depends_on:
+      - pg-studentDB
+      
+#  pg-notifyDB:
+#    image: postgres
+#    environment:
+#      POSTGRES_DB: notifyDB
+#      POSTGRES_USER: root
+#      POSTGRES_PASSWORD: root@123
+#    ports:
+#      - 5437:5432
+#    networks:
+#      - web-app-net
+#    volumes:
+#      - pg-notifyDB-storage:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    command: '--requirepass root@123'
+    ports:
+      - 6379:6379
+    networks:
+      - web-app-net
+    volumes:
+      - redis-inmemory-storage:/data
+
+#end of scripts
+# docker-compose -f docker-compose-tools.yaml up -d
+# docker-compose -f docker-compose-tools.yaml down
+# docker ps
+# docker run --name postgres-container -e POSTGRES_USER=your_db_username -e POSTGRES_PASSWORD=root@123 -e POSTGRES_DB=testDB -p 5432:5432 -d postgres
+
+# Postgress
+# docker exec -it pg-studentDB-container psql -U root -d studentDB
+# To Create a Database in Commandline
+  # studentDB=# CREATE DATABASE studentDB;
+# To List all Database
+  # studentDB=# \l
+# Connect to the New Database
+  # studentDB=# \c studentdb
+  # studentdb=# \c studentDB
+# Create Student table
+  # studentDB=# CREATE TABLE STS_STUDENT (id SERIAL PRIMARY KEY, name VARCHAR(100) NOT NULL, age INT NOT NULL);
+# Verify the table:
+  # studentDB=# \dt
+# Select Query to Table
+  # studentDB=# SELECT * FROM STS_STUDENT;
+# To exit the PostgreSQL command-line tool:
+  # studentDB=# \q
+
+# Alternative: Create Database directly from the command line Without Entering psql
+  # createdb -U postgres studentdb
+  # For Docker:
+    # docker exec -it postgres-container createdb -U root studentDB
+
+
+
+# Open Adminer: http://localhost:5050
+#Login Credentials:
+#    System: PostgreSQL
+#    Server: postgres (use container name, not localhost)
+#    Username: root
+#    Password: root@123
+#    Database: studentDB
+#    PGADMIN_DEFAULT_EMAIL: root@mypage.com
+#    PGADMIN_DEFAULT_PASSWORD: root@123
