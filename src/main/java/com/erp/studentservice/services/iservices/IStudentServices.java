@@ -11,12 +11,6 @@ import java.util.Optional;
  */
 
 public interface IStudentServices {
-    public String getByName(String name);
-    public String createStudent(Student student);
-    public String updateStudent(Student student);
-    public String updateStudentAge(Integer id, Integer age);
-    public String updateStudentPartial(Integer id, Map<String, Object> student);
-    public String deleteStudent(Student student);
 
     /*Data JPA CRUD*/
     public List<Student> getAllStudents() throws Exception;
