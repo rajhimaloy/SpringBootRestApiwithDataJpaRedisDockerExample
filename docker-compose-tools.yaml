@@ -1,8 +1,8 @@
 version: '3.8'
 
 networks:
-  web-app-net:
-    name: my-web-app-net
+  micro-app-net:
+    name: my-micro-app-net
     #driver: overlay
     driver: bridge
 
@@ -24,7 +24,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - web-app-net
+      - micro-app-net
     volumes:
       - pg-studentDB-storage:/var/lib/postgresql/data
 
@@ -40,7 +40,7 @@ services:
       - pgadmin-studentDB-data:/var/lib/pgadmin
     restart: on-failure
     networks:
-      - web-app-net
+      - micro-app-net
     depends_on:
       - pg-studentDB
       
@@ -53,17 +53,18 @@ services:
 #    ports:
 #      - 5437:5432
 #    networks:
-#      - web-app-net
+#      - micro-app-net
 #    volumes:
 #      - pg-notifyDB-storage:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
-    command: '--requirepass root@123'
+    #command: '--requirepass root@123'
+    container_name: redis-studentDB-container
     ports:
       - 6379:6379
     networks:
-      - web-app-net
+      - micro-app-net
     volumes:
       - redis-inmemory-storage:/data
 

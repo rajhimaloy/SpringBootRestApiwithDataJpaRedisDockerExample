@@ -2,6 +2,8 @@ package com.erp.studentservice.controllers;
 
 import com.erp.studentservice.model.Student;
 import com.erp.studentservice.services.iservices.IStudentServices;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 @RequestMapping("/student")
 public class StudentController {
 
+    @Autowired
     private IStudentServices iStudentServices;
 
     public StudentController(IStudentServices iStudentServices) {
@@ -31,8 +34,8 @@ public class StudentController {
 
     /*GET http://localhost:8080/api/rest/student/getbyname/Rajib*/
     @GetMapping("/getbyname/{name}")
-    public String getByName(@PathVariable("name") String name) {
-        return iStudentServices.getByName(name);
+    public ResponseEntity<String> getByName(@PathVariable("name") String name) {
+        return new ResponseEntity<>(iStudentServices.getByName(name), HttpStatus.OK);
     }
 
     /*POST http://localhost:8080/api/rest/student/createstudent
@@ -94,13 +97,13 @@ public class StudentController {
 
     /*GET http://localhost:8080/api/rest/student/getallstudents*/
     @GetMapping("/getallstudents")
-    public List<Student> getAllStudents() {
+    public List<Student> getAllStudents() throws Exception {
         return iStudentServices.getAllStudents();
     }
 
     /*GET http://localhost:8080/api/rest/student/getstudentbyid/2*/
     @GetMapping("/getstudentbyid/{id}")
-    public ResponseEntity<Student> getStudentById(@PathVariable Integer id) {
+    public ResponseEntity<Student> getStudentById(@PathVariable Integer id) throws Exception {
         Optional<Student> student = iStudentServices.getStudentById(id);
         return student.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -112,8 +115,8 @@ public class StudentController {
         "age": 35
     }*/
     @PostMapping("/savestudent")
-    public Student saveStudent(@RequestBody Student student) {
-        return iStudentServices.saveStudent(student);
+    public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+        return new ResponseEntity<>(iStudentServices.saveStudent(student), HttpStatus.CREATED); // Returns a 201 Created response
     }
 
     /*PUT http://localhost:8080/api/rest/student/updatestudent
@@ -123,8 +126,8 @@ public class StudentController {
         "age": 38
     }*/
     @PutMapping("/update")
-    public Student update(@RequestBody Student student) {
-        return iStudentServices.update(student);
+    public ResponseEntity<Student> update(@RequestBody Student student) throws Exception {
+        return new ResponseEntity<>(iStudentServices.update(student), HttpStatus.OK);
     }
 
     /*PUT http://localhost:8080/api/rest/student/updatestudent
@@ -133,14 +136,14 @@ public class StudentController {
         "age": 38
     }*/
     @PatchMapping("/updatepartial/{id}")
-    public Student updatePartial(@PathVariable Integer id, @RequestBody Student student) {
-        return iStudentServices.updatePartial(id, student);
+    public ResponseEntity<Student> updatePartial(@PathVariable Integer id, @RequestBody Student student) throws Exception {
+        return new ResponseEntity<>(iStudentServices.updatePartial(id, student), HttpStatus.OK);
     }
 
     @DeleteMapping("/deletestudentbyid/{id}")
-    public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) throws Exception {
         iStudentServices.deleteStudent(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build(); //Returns a 204 No Content response
     }
 
 }

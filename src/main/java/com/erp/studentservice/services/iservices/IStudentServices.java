@@ -19,10 +19,10 @@ public interface IStudentServices {
     public String deleteStudent(Student student);
 
     /*Data JPA CRUD*/
-    public List<Student> getAllStudents();
-    public Optional<Student> getStudentById(Integer id);
+    public List<Student> getAllStudents() throws Exception;
+    public Optional<Student> getStudentById(Integer id) throws Exception;
     public Student saveStudent(Student student);
-    public Student update(Student student);
-    public Student updatePartial(Integer id, Student student);
-    public void deleteStudent(Integer id);
+    public Student update(Student student) throws Exception;
+    public Student updatePartial(Integer id, Student student) throws Exception;
+    public void deleteStudent(Integer id) throws Exception;
 }
